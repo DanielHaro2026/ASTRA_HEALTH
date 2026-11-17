@@ -1,0 +1,85 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+
+            <div class="card shadow border-0">
+                <div class="card-body p-4">
+
+                    <div class="text-center mb-4">
+                        <h2>🚀 ASTRA HEALTH</h2>
+                        <h5>Crear cuenta de astronauta</h5>
+                        <p class="text-muted">
+                            Regístrate para acceder a la plataforma
+                        </p>
+                    </div>
+
+                    <form method="POST"
+                          action="{{ url_for('auth.register') }}">
+
+                        <input type="hidden"
+                               name="csrf_token"
+                               value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Nombre de usuario
+                            </label>
+                            <input type="text"
+                                   name="username"
+                                   class="form-control"
+                                   placeholder="Ingresa tu usuario"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Correo electrónico
+                            </label>
+                            <input type="email"
+                                   name="email"
+                                   class="form-control"
+                                   placeholder="astronauta@astrahealth.com"
+                                   required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">
+                                Contraseña
+                            </label>
+                            <input type="password"
+                                   name="password"
+                                   class="form-control"
+                                   placeholder="Mínimo 8 caracteres"
+                                   minlength="8"
+                                   required>
+                        </div>
+
+                        <button type="submit"
+                                class="btn btn-primary w-100">
+                            Crear cuenta
+                        </button>
+
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p>
+                            ¿Ya tienes una cuenta?
+                            <a href="{{ url_for('auth.login') }}">
+                                Iniciar sesión
+                            </a>
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

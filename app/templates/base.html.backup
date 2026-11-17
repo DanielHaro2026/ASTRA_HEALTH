@@ -1,0 +1,76 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ASTRA HEALTH</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+</head>
+
+<body>
+
+    <!-- NAVEGACION -->
+    <nav class="navbar-astra">
+        <div class="container d-flex justify-content-between align-items-center">
+
+            <a class="navbar-brand fw-bold text-decoration-none"
+               href="{{ url_for('index') }}">
+                ✨ ASTRA HEALTH
+            </a>
+
+            <div class="d-flex gap-3">
+
+                <a class="nav-link"
+                   href="{{ url_for('auth.login') }}">
+                    Iniciar sesión
+                </a>
+
+                <a class="nav-link"
+                   href="{{ url_for('auth.register') }}">
+                    Registrarse
+                </a>
+
+            </div>
+        </div>
+    </nav>
+
+    <!-- MENSAJES -->
+    <main class="container">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-3">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}
+        {% endblock %}
+
+    </main>
+
+    <!-- PIE DE PAGINA -->
+    <footer class="footer-astra text-center py-3">
+        <small>
+            ASTRA HEALTH | Space Health Monitoring System
+            <br>
+            NASA Space Apps Challenge 2026 | Academic Project
+        </small>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+</body>
+</html>

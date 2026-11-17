@@ -1,0 +1,91 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 750px;">
+
+        <div class="card-header bg-warning">
+            <h4 class="mb-0">Editar evaluación de bienestar</h4>
+        </div>
+
+        <div class="card-body">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Estado emocional</label>
+                    <select name="mood" class="form-select" required>
+                        {% for mood in ["Muy bien", "Bien", "Neutral", "Triste", "Preocupado", "Agotado"] %}
+                        <option value="{{ mood }}"
+                            {% if record.mood == mood %}selected{% endif %}>
+                            {{ mood }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <small class="text-muted">
+                        Selecciona la opción que mejor describa cómo te sientes.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nivel de estrés (1 a 10)</label>
+                    <input type="number"
+                           name="stress_level"
+                           class="form-control"
+                           min="1"
+                           max="10"
+                           step="1"
+                           value="{{ record.stress_level }}"
+                           required>
+                    <small class="text-muted">
+                        Registra tu percepción personal del nivel de estrés.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Horas de sueño</label>
+                    <input type="number"
+                           name="sleep_hours"
+                           class="form-control"
+                           min="0"
+                           max="24"
+                           step="0.5"
+                           value="{{ record.sleep_hours }}"
+                           required>
+                    <small class="text-muted">
+                        Indica cuántas horas dormiste.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Observaciones personales</label>
+                    <textarea name="notes"
+                              class="form-control"
+                              rows="4">{{ record.notes or '' }}</textarea>
+                    <small class="text-muted">
+                        Campo opcional para añadir comentarios.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Actualizar evaluación
+                </button>
+
+                <a href="{{ url_for('mental_health.index') }}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

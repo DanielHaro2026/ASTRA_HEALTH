@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="card shadow-sm mx-auto" style="max-width: 750px;">
+
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Nueva evaluación de bienestar</h4>
+        </div>
+
+        <div class="card-body">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST">
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Estado emocional</label>
+                    <select name="mood" class="form-select" required>
+                        <option value="">Selecciona cómo te sientes</option>
+                        <option value="Muy bien">Muy bien</option>
+                        <option value="Bien">Bien</option>
+                        <option value="Neutral">Neutral</option>
+                        <option value="Triste">Triste</option>
+                        <option value="Preocupado">Preocupado</option>
+                        <option value="Agotado">Agotado</option>
+                    </select>
+                    <small class="text-muted">
+                        Selecciona la opción que mejor describa cómo te sientes.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Nivel de estrés (1 a 10)</label>
+                    <input type="number"
+                           name="stress_level"
+                           class="form-control"
+                           min="1"
+                           max="10"
+                           step="1"
+                           placeholder="Ejemplo: 4"
+                           required>
+                    <small class="text-muted">
+                        Registra tu percepción personal: 1 representa muy poco estrés
+                        y 10 representa el nivel más alto.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Horas de sueño</label>
+                    <input type="number"
+                           name="sleep_hours"
+                           class="form-control"
+                           min="0"
+                           max="24"
+                           step="0.5"
+                           placeholder="Ejemplo: 7.5"
+                           required>
+                    <small class="text-muted">
+                        Indica cuántas horas dormiste en el último periodo de descanso.
+                    </small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">Observaciones personales</label>
+                    <textarea name="notes"
+                              class="form-control"
+                              rows="4"
+                              placeholder="Puedes escribir comentarios sobre tu bienestar..."></textarea>
+                    <small class="text-muted">
+                        Campo opcional. Evita incluir información personal de terceros.
+                    </small>
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Guardar evaluación
+                </button>
+
+                <a href="{{ url_for('mental_health.index') }}"
+                   class="btn btn-secondary">
+                    Cancelar
+                </a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

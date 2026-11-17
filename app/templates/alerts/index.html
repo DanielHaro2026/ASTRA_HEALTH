@@ -1,0 +1,94 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Sistema de alertas</h2>
+            <p class="text-muted">Administración de tus notificaciones.</p>
+        </div>
+
+        <a href="{{ url_for('alerts.create') }}" class="btn btn-primary">
+            + Nueva alerta
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+            <table class="table table-striped align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Título</th>
+                        <th>Mensaje</th>
+                        <th>Prioridad</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for alert in alerts %}
+                    <tr>
+                        <td>{{ alert.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ alert.title }}</td>
+                        <td>{{ alert.message }}</td>
+                        <td>
+                            {% if alert.severity == "high" %}
+                                <span class="badge bg-danger">Alta</span>
+                            {% elif alert.severity == "medium" %}
+                                <span class="badge bg-warning text-dark">Media</span>
+                            {% else %}
+                                <span class="badge bg-info text-dark">Baja</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if alert.status == "resolved" %}
+                                <span class="badge bg-success">Atendida</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pendiente</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if alert.status == "pending" %}
+                            <form method="POST"
+                                  action="{{ url_for('alerts.resolve', alert_id=alert.id) }}"
+                                  class="d-inline">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-success btn-sm" type="submit">
+                                    Atendida
+                                </button>
+                            </form>
+                            {% endif %}
+
+                            <form method="POST"
+                                  action="{{ url_for('alerts.delete', alert_id=alert.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('¿Eliminar esta alerta?');">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                                <button class="btn btn-danger btn-sm" type="submit">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            No tienes alertas registradas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

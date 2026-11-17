@@ -1,0 +1,163 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="card shadow-sm mx-auto" style="max-width: 750px;">
+
+        <div class="card-header bg-warning">
+            <h4 class="mb-0">Editar indicador de salud</h4>
+            <small>Actualiza la información del indicador seleccionado.</small>
+        </div>
+
+        <div class="card-body">
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+
+            <form method="POST">
+
+                <input type="hidden"
+                       name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <!-- NOMBRE -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Nombre del indicador
+                    </label>
+
+                    <input type="text"
+                           name="name"
+                           class="form-control"
+                           value="{{ indicator.name }}"
+                           maxlength="120"
+                           required>
+
+                    <small class="form-text text-muted">
+                        Escribe el nombre del aspecto de salud que deseas monitorear.
+                    </small>
+                </div>
+
+                <!-- CATEGORIA -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Categoría
+                    </label>
+
+                    <select name="category" class="form-select" required>
+                        <option value="Physical Health"
+                            {% if indicator.category == "Physical Health" %}selected{% endif %}>
+                            Salud física
+                        </option>
+
+                        <option value="Mental Health"
+                            {% if indicator.category == "Mental Health" %}selected{% endif %}>
+                            Salud mental
+                        </option>
+
+                        <option value="Nutrition"
+                            {% if indicator.category == "Nutrition" %}selected{% endif %}>
+                            Nutrición
+                        </option>
+
+                        <option value="Activity"
+                            {% if indicator.category == "Activity" %}selected{% endif %}>
+                            Actividad física
+                        </option>
+
+                        <option value="Other"
+                            {% if indicator.category == "Other" %}selected{% endif %}>
+                            Otro
+                        </option>
+                    </select>
+
+                    <small class="form-text text-muted">
+                        Selecciona el área de salud a la que pertenece el indicador.
+                    </small>
+                </div>
+
+                <!-- VALOR Y UNIDAD -->
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            Valor
+                        </label>
+
+                        <input type="number"
+                               name="value"
+                               class="form-control"
+                               value="{{ indicator.value }}"
+                               step="any"
+                               required>
+
+                        <small class="form-text text-muted">
+                            Ingresa el resultado numérico de la medición.
+                            Ejemplo: 75.
+                        </small>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">
+                            Unidad de medida
+                        </label>
+
+                        <input type="text"
+                               name="unit"
+                               class="form-control"
+                               value="{{ indicator.unit }}"
+                               maxlength="30"
+                               required>
+
+                        <small class="form-text text-muted">
+                            Indica en qué unidad se expresa el resultado.
+                            Ejemplo: kg, cm, bpm o mmHg.
+                        </small>
+                    </div>
+
+                </div>
+
+                <!-- DESCRIPCION -->
+                <div class="mb-3">
+                    <label class="form-label fw-bold">
+                        Descripción
+                    </label>
+
+                    <textarea name="description"
+                              class="form-control"
+                              rows="4">{{ indicator.description or '' }}</textarea>
+
+                    <small class="form-text text-muted">
+                        Añade detalles sobre la medición, cuándo se realizó
+                        o alguna observación importante.
+                    </small>
+                </div>
+
+                <!-- BOTONES -->
+                <div class="d-flex gap-2">
+
+                    <button type="submit" class="btn btn-primary">
+                        Actualizar indicador
+                    </button>
+
+                    <a href="{{ url_for('health.index') }}"
+                       class="btn btn-secondary">
+                        Cancelar
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+{% endblock %}

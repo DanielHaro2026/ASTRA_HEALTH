@@ -1,0 +1,85 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>Bienestar y salud mental</h2>
+            <p class="text-muted">
+                Historial personal de bienestar emocional, estrés y sueño.
+            </p>
+        </div>
+
+        <a href="{{ url_for('mental_health.create') }}"
+           class="btn btn-primary">
+            + Nueva evaluación
+        </a>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <div class="card shadow-sm">
+        <div class="card-body table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Estado emocional</th>
+                        <th>Nivel de estrés</th>
+                        <th>Horas de sueño</th>
+                        <th>Observaciones</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.created_at.strftime('%d/%m/%Y %H:%M') }}</td>
+                        <td>{{ record.mood }}</td>
+                        <td>{{ record.stress_level }}/10</td>
+                        <td>{{ record.sleep_hours }} horas</td>
+                        <td>{{ record.notes or '-' }}</td>
+                        <td>
+                            <a href="{{ url_for('mental_health.edit', record_id=record.id) }}"
+                               class="btn btn-warning btn-sm">
+                                Editar
+                            </a>
+
+                            <form method="POST"
+                                  action="{{ url_for('mental_health.delete', record_id=record.id) }}"
+                                  class="d-inline"
+                                  onsubmit="return confirm('¿Deseas eliminar esta evaluación?');">
+                                <input type="hidden"
+                                       name="csrf_token"
+                                       value="{{ csrf_token() }}">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    Eliminar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4">
+                            Todavía no tienes evaluaciones registradas.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="alert alert-info mt-3">
+        Esta sección permite registrar información personal de bienestar.
+        No sustituye una evaluación ni un diagnóstico profesional.
+    </div>
+
+</div>
+{% endblock %}

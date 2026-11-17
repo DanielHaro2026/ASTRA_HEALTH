@@ -1,0 +1,175 @@
+﻿{% extends "base.html" %}
+
+{% block content %}
+<div class="container py-4">
+
+    <div class="mb-4">
+        <h2 class="fw-bold">ASTRA HEALTH Dashboard</h2>
+        <p class="text-muted">
+            Panel general de seguimiento de salud y bienestar.
+        </p>
+        <span class="text-muted">
+            Usuario: {{ current_user.username }}
+        </span>
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-primary h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Indicadores de salud</p>
+                    <h2 class="text-primary fw-bold">{{ total_indicators }}</h2>
+                    <a href="{{ url_for('health.index') }}"
+                       class="btn btn-outline-primary btn-sm">
+                        Ver indicadores
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-info h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Evaluaciones de bienestar</p>
+                    <h2 class="text-info fw-bold">{{ total_evaluations }}</h2>
+                    <a href="{{ url_for('mental_health.index') }}"
+                       class="btn btn-outline-info btn-sm">
+                        Ver evaluaciones
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-warning h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Alertas pendientes</p>
+                    <h2 class="text-warning fw-bold">{{ pending_alerts }}</h2>
+                    <a href="{{ url_for('alerts.index') }}"
+                       class="btn btn-outline-warning btn-sm">
+                        Revisar alertas
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3">
+            <div class="card shadow-sm border-success h-100">
+                <div class="card-body">
+                    <p class="text-muted mb-1">Alertas atendidas</p>
+                    <h2 class="text-success fw-bold">{{ resolved_alerts }}</h2>
+                    <a href="{{ url_for('alerts.index') }}"
+                       class="btn btn-outline-success btn-sm">
+                        Ver historial
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Últimas evaluaciones de bienestar</h5>
+                </div>
+
+                <div class="card-body">
+                    {% if recent_evaluations %}
+                        <div class="table-responsive">
+                            <table class="table table-sm align-middle">
+                                <thead>
+                                    <tr>
+                                        <th>Fecha</th>
+                                        <th>Estado de ánimo</th>
+                                        <th>Estrés</th>
+                                        <th>Sueño</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for record in recent_evaluations %}
+                                    <tr>
+                                        <td>{{ record.created_at.strftime('%d/%m/%Y') }}</td>
+                                        <td>{{ record.mood }}</td>
+                                        <td>{{ record.stress_level }}/10</td>
+                                        <td>{{ record.sleep_hours }} h</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-muted mb-0">
+                            Todavía no tienes evaluaciones registradas.
+                        </p>
+                    {% endif %}
+
+                    <a href="{{ url_for('mental_health.create') }}"
+                       class="btn btn-primary btn-sm mt-3">
+                        Registrar evaluación
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header">
+                    <h5 class="mb-0">Últimas alertas</h5>
+                </div>
+
+                <div class="card-body">
+                    {% if recent_alerts %}
+                        {% for alert in recent_alerts %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ alert.title }}</strong>
+
+                                {% if alert.severity == "high" %}
+                                    <span class="badge bg-danger">Alta</span>
+                                {% elif alert.severity == "medium" %}
+                                    <span class="badge bg-warning text-dark">Media</span>
+                                {% else %}
+                                    <span class="badge bg-info text-dark">Baja</span>
+                                {% endif %}
+                            </div>
+
+                            <p class="mb-1">{{ alert.message }}</p>
+
+                            <small class="text-muted">
+                                {{ alert.created_at.strftime('%d/%m/%Y %H:%M') }}
+                            </small>
+
+                            {% if alert.status == "resolved" %}
+                                <span class="badge bg-success">Atendida</span>
+                            {% else %}
+                                <span class="badge bg-secondary">Pendiente</span>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted mb-0">
+                            No tienes alertas registradas.
+                        </p>
+                    {% endif %}
+
+                    <a href="{{ url_for('alerts.create') }}"
+                       class="btn btn-primary btn-sm mt-2">
+                        Crear alerta
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="alert alert-info mt-4">
+        <strong>Nota:</strong> ASTRA HEALTH presenta información de seguimiento
+        y bienestar. Los datos mostrados no constituyen diagnósticos médicos.
+    </div>
+
+</div>
+{% endblock %}
