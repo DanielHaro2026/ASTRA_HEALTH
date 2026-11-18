@@ -33,6 +33,10 @@ def inicializar():
     with app.app_context():
         db.create_all()
 
+        recuperar = (
+            os.environ.get("ASTRA_RESET_EXISTING_PASSWORDS") == "1"
+        )
+
         for cuenta in CUENTAS:
             usuario = User.query.filter_by(
                 username=cuenta["username"]
@@ -52,7 +56,7 @@ def inicializar():
                     f"El correo {cuenta['email']} pertenece a otra cuenta."
                 )
 
-            if usuario:
+            if usuario and not recuperar:
                 print(f"YA EXISTE, SE CONSERVA: {cuenta['username']}")
                 continue
 
@@ -63,15 +67,18 @@ def inicializar():
                     f"Falta {cuenta['env']} o tiene menos de 12 caracteres."
                 )
 
-            usuario = User(
-                username=cuenta["username"],
-                email=cuenta["email"],
-                role=cuenta["role"],
-            )
-            usuario.set_password(password)
-            db.session.add(usuario)
-
-            print(f"CREADO: {cuenta['username']}")
+            if usuario:
+                usuario.set_password(password)
+                print(f"CONTRASEÑA ACTUALIZADA: {cuenta['username']}")
+            else:
+                usuario = User(
+                    username=cuenta["username"],
+                    email=cuenta["email"],
+                    role=cuenta["role"],
+                )
+                usuario.set_password(password)
+                db.session.add(usuario)
+                print(f"CREADO: {cuenta['username']}")
 
         db.session.commit()
         print("Inicialización finalizada correctamente.")
