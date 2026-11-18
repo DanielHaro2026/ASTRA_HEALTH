@@ -1,0 +1,32 @@
+[1mdiff --git a/app/auth/routes.py b/app/auth/routes.py[m
+[1mindex be6a14e..b4d30fd 100644[m
+[1m--- a/app/auth/routes.py[m
+[1m+++ b/app/auth/routes.py[m
+[36m@@ -117,3 +117,26 @@[m [mdef logout():[m
+     flash("Sesión cerrada correctamente.", "success")[m
+ [m
+     return redirect(url_for("auth.login"))[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# =================================================[m
+[32m+[m[32m# CAMBIAR ROL DE USUARIO (SOLO ADMINISTRADORES)[m
+[32m+[m[32m# =================================================[m
+[32m+[m
+[32m+[m[32m@auth_bp.route("/cambiar-rol/<int:user_id>/<string:nuevo_rol>", methods=["POST"])[m
+[32m+[m[32m@login_required[m
+[32m+[m[32mdef cambiar_rol(user_id, nuevo_rol):[m
+[32m+[m
+[32m+[m[32m    if current_user.role != "admin":[m
+[32m+[m[32m        abort(403)[m
+[32m+[m
+[32m+[m[32m    if nuevo_rol not in ["admin", "astronaut"]:[m
+[32m+[m[32m        abort(400)[m
+[32m+[m
+[32m+[m[32m    usuario = User.query.get_or_404(user_id)[m
+[32m+[m[32m    usuario.role = nuevo_rol[m
+[32m+[m
+[32m+[m[32m    db.session.commit()[m
+[32m+[m
+[32m+[m[32m    flash("Rol actualizado correctamente.", "success")[m
+[32m+[m[32m    return redirect(url_for("index"))[m
+\ No newline at end of file[m
